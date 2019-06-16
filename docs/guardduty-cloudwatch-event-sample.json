@@ -1,0 +1,108 @@
+{
+    "version": "0",
+    "id": "c35f6e72-0000-fb43-dbf3-d8b270003dc",
+    "detail-type": "GuardDuty Finding",
+    "source": "aws.guardduty",
+    "account": "000001111194",
+    "time": "2019-06-15T23:15:06Z",
+    "region": "ap-southeast-2",
+    "resources": [
+      
+    ],
+    "detail": {
+      "schemaVersion": "2.0",
+      "accountId": "000001111194",
+      "region": "ap-southeast-2",
+      "partition": "aws",
+      "id": "72b5aea401f3386c93f530f9fd99b5d9",
+      "arn": "arn:aws:guardduty:ap-southeast-2:000001111194:detector\/d4b5a4f4ff002d60765d6d6b0b7eeeee\/finding\/72b5aea401f3386c93f530f9fd99b5d9",
+      "type": "Trojan:EC2\/DNSDataExfiltration",
+      "resource": {
+        "resourceType": "Instance",
+        "instanceDetails": {
+          "instanceId": "i-052d01dc385deeeee",
+          "instanceType": "m4.large",
+          "launchTime": "2019-06-14T01:29:55Z",
+          "platform": null,
+          "productCodes": [
+            
+          ],
+          "iamInstanceProfile": {
+            "arn": "arn:aws:iam::000001111194:instance-profile\/guardduty-demo-RedTeamInstanceProfile-12V532PTT5LGZ",
+            "id": "AIPATYIYEQNPGQWY4VYCG"
+          },
+          "networkInterfaces": [
+            {
+              "ipv6Addresses": [
+                
+              ],
+              "networkInterfaceId": "eni-0c4c86ce10aff3aa2",
+              "privateDnsName": "ip-172-16-0-25.ap-southeast-2.compute.internal",
+              "privateIpAddress": "172.16.0.25",
+              "privateIpAddresses": [
+                {
+                  "privateDnsName": "ip-172-16-0-25.ap-southeast-2.compute.internal",
+                  "privateIpAddress": "172.16.0.25"
+                }
+              ],
+              "subnetId": "subnet-05d6f8c70ad8afe57",
+              "vpcId": "vpc-04d9d9f179efca5db",
+              "securityGroups": [
+                {
+                  "groupName": "guardduty-demo-RedTeamSecurityGroup-G02ZDHTZBH2D",
+                  "groupId": "sg-0bcaa095ddfa5002f"
+                }
+              ]
+            }
+          ],
+          "tags": [
+            {
+              "key": "aws:cloudformation:logical-id",
+              "value": "RedTeam"
+            },
+            {
+              "key": "Name",
+              "value": "RedTeam"
+            },
+            {
+              "key": "aws:cloudformation:stack-name",
+              "value": "guardduty-demo"
+            },
+            {
+              "key": "aws:cloudformation:stack-id",
+              "value": "arn:aws:cloudformation:ap-southeast-2:000001111194:stack\/guardduty-demo\/798da5f0-8e43-11e9-a477-024486204d54"
+            }
+          ],
+          "instanceState": "running",
+          "availabilityZone": "ap-southeast-2a",
+          "imageId": "ami-0fb7513bcdc525c3b",
+          "imageDescription": "Amazon Linux 2 AMI 2.0.20190508 x86_64 HVM gp2"
+        }
+      },
+      "service": {
+        "serviceName": "guardduty",
+        "detectorId": "d4b5a4f4ff002d60765d6d6b0b7eeeee",
+        "action": {
+          "actionType": "DNS_REQUEST",
+          "dnsRequestAction": {
+            "domain": "02ebvenpjyobgcbvgmgm357dgwkbsfgaffxmqmx5cwcb1bevylzr0xhmbbbjel.eviygbk4obiajdzynqsehkax2-q5a.loganding123test.com",
+            "protocol": "0",
+            "blocked": false
+          }
+        },
+        "resourceRole": "TARGET",
+        "additionalInfo": {
+          "domain": "02ebvenpjyobgcbvgmgm357dgwkbsfgaffxmqmx5cwcb1bevylzr0xhmbbbjel.eviygbk4obiajdzynqsehkax2-q5a.loganding123test.com"
+        },
+        "eventFirstSeen": "2019-06-15T21:21:01Z",
+        "eventLastSeen": "2019-06-15T21:21:37Z",
+        "archived": false,
+        "count": 9
+      },
+      "severity": 8,
+      "createdAt": "2019-06-15T22:35:29.126Z",
+      "updatedAt": "2019-06-15T23:01:02.924Z",
+      "title": "Data exfiltration through DNS queries from EC2 instance i-052d01dc385deeeee.",
+      "description": "EC2 instance i-052d01dc385deeeee is attempting to query domain names that resemble exfiltrated data. This could be an indication of a compromised instance."
+    }
+  }
