@@ -95,7 +95,7 @@ Resources:
               response = securityGroupClient.create_security_group(
                 Description='GuardDuty Quarantine Security Group',
                 GroupName=quarantineSecurityGroup,
-                VpcId='vpc-04d9d9f179efca5db'
+                VpcId=vpcId
               )
               # Remove the default egress Rule
               ec2 = boto3.resource('ec2', region_name=region)
