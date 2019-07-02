@@ -1,6 +1,11 @@
 # GuardDuty Automatic Event Response
 
-## 1. Deploy the Amazon Guardduty Tester environement
+## Introduction
+This solution demonstrates how Incident Response can be automated in AWS, using GuardDuty, CloudWatch Event Rules, Lambda and SNS. CloudFormation is used template and deploy the solution.
+
+This solution can be tested either by [generating sample findings in the GuardDuty console](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_findings.html#guardduty_sample-findings) or by using the [GuardDuty Proof of Concept](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_findings.html#guardduty_findings-scripts) to generate real findings based on exploiting real attack vectors.
+
+## 1. Deploy the Amazon GuardDuty Proof of Concept environment
 
 Perform the **Prerequisites** and **Step1** from [Amazon Guardduty Tester](https://github.com/awslabs/amazon-guardduty-tester)
 
@@ -12,11 +17,11 @@ the below diagram for the solution.
 
 ![Automatic Event Response Solution](docs/guardduty-auto-event-response-solution.png)
 
-Deploy Cloud formation via AWS Console
+Deploy the template using CloudFormation in the AWS Console
 
 or
 
-Deploy Cloud formation via AWS Cli
+Deploy the template using CloudFormation via AWS Cli
 ```
 aws cloudformation deploy \
 --template-file guardduty-auto-event-response-cf.yaml \
@@ -35,7 +40,7 @@ Perform **Step2** and **Step3** from [Amazon Guardduty Tester](https://github.co
 ## 4. Expected result
 
 #### GuardDuty
-Expect to see several findings( could take upto 15 mins )
+Expect to see several findings (could take up to 15 mins )
 
 #### Cloudwatch Event
 The Cloudwatch event rule will trigger the SNS Notifcation and Lambda function
@@ -59,6 +64,9 @@ The lambda function should be executed which should,
 2. Delete the **Automatic Event Response Solution cloudformation** stack.
 3. Delete the **Amazon Guardduty Tester environement** stack.
 4. [Suspend or Disable GuardDuty](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_suspend-disable.html)
+
+## Attribution
+The original solution using Amazon GuardDuty, Amazon CloudWatch Events, AWS Lambda and Amazon SNS was developed by @phillisf. Lambda code was written using Python 3.6  The code was improved and further developed by @Manoj2087, who also created the YAML template to deploy the solution using CloudFormation.
 
 ## License
 
