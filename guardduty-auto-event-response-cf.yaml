@@ -48,7 +48,7 @@ Resources:
       Handler: index.lambda_handler
       MemorySize: 128
       Role: !GetAtt GuardDutyAutoResponseLambdaExecRole.Arn
-      Runtime: python2.7
+      Runtime: python3.7
       Timeout: 300
       Code: 
         ZipFile: |
@@ -68,72 +68,87 @@ Resources:
           ]
 
           def validateSecurityGroups(vpcId, region):
-            quarantineSecurityGroup = os.environ['QuarantineSecurityGroup']
-            securityGroupList = []
-            securityGroupClient = boto3.client('ec2', region_name=region)
-            # List all security group in the VPC
-            securityGroups = securityGroupClient.describe_security_groups(
-              Filters=[
-                {
-                  'Name': 'vpc-id',
-                  'Values': [
-                    vpcId,
-                  ],
-                  'Name': 'group-name',
-                  'Values': [
-                    quarantineSecurityGroup,
-                  ]
-                },
-              ]
-            )
-            print(securityGroups['SecurityGroups'])
-            if not (securityGroups['SecurityGroups']):
-              # if the list is empty. The secuirty group does not exists.
-              # Better create a new security group with no inbound and outbound...
-              # Create Security Group
-              print("Creating a security group " + quarantineSecurityGroup)
-              response = securityGroupClient.create_security_group(
-                Description='GuardDuty Quarantine Security Group',
-                GroupName=quarantineSecurityGroup,
-                VpcId=vpcId
-              )
-              # Remove the default egress Rule
-              ec2 = boto3.resource('ec2', region_name=region)
-              securityGroupResource = ec2.SecurityGroup(response['GroupId'])
-              securityGroupResource.revoke_egress(
-                IpPermissions=[
+            try:
+              quarantineSecurityGroup = os.environ['QuarantineSecurityGroup']
+              securityGroupList = []
+              securityGroupClient = boto3.client('ec2', region_name=region)
+              # List all security group in the VPC
+              securityGroups = securityGroupClient.describe_security_groups(
+                Filters=[
                   {
-                    'FromPort': -1,
-                    'IpProtocol': '-1',
-                    'IpRanges': [
-                      {
-                        'CidrIp': '0.0.0.0/0'
-                      },
+                    'Name': 'vpc-id',
+                    'Values': [
+                      vpcId,
                     ],
-                    'ToPort': -1
-
+                    'Name': 'group-name',
+                    'Values': [
+                      quarantineSecurityGroup,
+                    ]
                   },
                 ]
               )
-              return response['GroupId']
-            else:
-              # if the list is not empty. The secuirty group exists. Return the GroupID 
-              return securityGroups['SecurityGroups'][0]['GroupId']
+              if not (securityGroups['SecurityGroups']):
+                # if the list is empty, the security group does not exist.
+                # Create a new security group with no inbound and outbound rules...
+                print("Creating a security group " + quarantineSecurityGroup)
+                response = securityGroupClient.create_security_group(
+                  Description='GuardDuty Quarantine Security Group',
+                  GroupName=quarantineSecurityGroup,
+                  VpcId=vpcId
+                )
+                # Remove the default egress Rule
+                ec2 = boto3.resource('ec2', region_name=region)
+                securityGroupResource = ec2.SecurityGroup(response['GroupId'])
+                securityGroupResource.revoke_egress(
+                  IpPermissions=[
+                    {
+                      'FromPort': -1,
+                      'IpProtocol': '-1',
+                      'IpRanges': [
+                        {
+                          'CidrIp': '0.0.0.0/0'
+                        },
+                      ],
+                      'ToPort': -1
 
-          def evaluate(gdType, region, instanceId, interfaces, securityGroupId):
-            ec2Client = boto3.client('ec2', region_name=region)
-            instances = [instanceId]
-            if gdType in eventTypes:
-              print(str(gdType) + ' was found in the eventTypes array')
-              ec2Client.create_tags(Resources=instances, Tags=[{'Key': 'GuardDuty Status', 'Value': 'Quarantined'}])
-              for iface in interfaces:
-                print('Interface ' + iface)
-                print('Security Group ' + securityGroupId)
-                ec2Client.modify_network_interface_attribute(DryRun=False, Groups=[securityGroupId], NetworkInterfaceId=iface)
+                    },
+                  ]
+                )
+                return response['GroupId']
+              else:
+                # if the list is not empty the security group exists,
+                # so just return the GroupID 
+                return securityGroups['SecurityGroups'][0]['GroupId']
+             except Exception as e:
+              raise e
+
+          def evaluate(
+            gdType,
+            region,
+            instanceId,
+            interfaces,
+            securityGroupId
+            ):
+            try:
+              ec2Client = boto3.client('ec2', region_name=region)
+              instances = [instanceId]
+              if gdType in eventTypes:
+                ec2Client.create_tags(
+                  Resources=instances,
+                  Tags=[{'Key': 'GuardDuty Status', 'Value': 'Quarantined'}]
+                  )
+
+                for iface in interfaces:
+                  ec2Client.modify_network_interface_attribute(
+                    DryRun=False,
+                    Groups=[securityGroupId],
+                    NetworkInterfaceId=iface
+                    )
+            except Exception as e:
+              raise e
 
           def lambda_handler(event, context):
             try:
-              print("Quarantine Security Group = " + os.environ['QuarantineSecurityGroup'] )
               guardDutyFindingType = event['detail']['type']
               region = event['detail']['region']
               instanceId = event['detail']['resource']['instanceDetails']['instanceId']
@@ -143,16 +158,22 @@ Resources:
                 interfaces.append(interface['networkInterfaceId'])
                 
               securityGroupId = validateSecurityGroups(vpcId, region)
-              print('Security group ID returned is: ' + securityGroupId)
 
-              evaluate(guardDutyFindingType, region, instanceId, interfaces, securityGroupId)
+              evaluate(
+                guardDutyFindingType,
+                region,
+                instanceId,
+                interfaces,
+                securityGroupId
+                )
             
               return {
                 'statusCode': 200,
-                'body': json.dumps('Execution complete. Further detail can be found in CloudWatch Logs')
+                'body': 'Execution complete. Check CloudWatch Logs for execution detail'
               }
             except Exception as e:
               raise e
+
 
   GuardDutyEventLambdaInvokePermission: 
     Type: AWS::Lambda::Permission
