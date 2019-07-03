@@ -9,7 +9,7 @@ If you plan to use the proof of concept in your testing, start with step 1, belo
 
 ### 1. Deploy the Amazon GuardDuty Proof of Concept environment
 
-Perform the **Prerequisites** and **Step1** from [Amazon Guardduty Tester](https://github.com/awslabs/amazon-guardduty-tester)
+Perform the **Prerequisites** and **Step1** from [Amazon GuardDuty Tester](https://github.com/awslabs/amazon-guardduty-tester)
 
 ### 2. Deploy Automatic Event Response Solution
 
@@ -37,35 +37,35 @@ QuarantineSecurityGroupName=guardduty-quarantine
 
 ### 3. Run the Test
 
-Perform **Step2** and **Step3** from [Amazon Guardduty Tester](https://github.com/awslabs/amazon-guardduty-tester).
+Perform **Step2** and **Step3** from [Amazon GuardDuty Tester](https://github.com/awslabs/amazon-guardduty-tester).
 
 **or**
 
 [Generate sample findings](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_findings.html#guardduty_sample-findings) in the GuardDuty console.
 
-### 4. Expected result
+### 4. Expected Result
 
 #### GuardDuty
-Expect to see several findings (could take up to 15 mins )
+Expect to see several findings (this could take up to 15 mins).
 
 #### Cloudwatch Event
-The Cloudwatch event rule will trigger the SNS Notifcation and Lambda function
+The Cloudwatch event rule will trigger the SNS Notifcation and Lambda function.
 
-*Click for [sample GuardDuty cloudwatch event](docs/guardduty-cloudwatch-event-sample.json)*
+*Click for a [sample GuardDuty cloudwatch event](docs/guardduty-cloudwatch-event-sample.json)*
 
 #### SNS Notifcation
 Expect to receive an Email notification to the email address subcribed to the SNS topic.
 The body of the Email should use the input template specified in the CloudWatch rule.
 
 #### Lambda Function
-The lambda function should be executed which should,
-1.  Create a Quarantine Security Group in the VPC (with the compromised EC2 instance) if it does not exist.
+The lambda function will be executed. The Lambda function will:
+1.  Create a Quarantine Security Group in the VPC (with the compromised EC2 instance) if it does not already exist.
 2.  Add a tag **GuardDuty Status: Quarantined** to the compromised EC2 instance.
-3.  Remove the existing security groups on the compromised EC2 instance and replace it with the Quarantine Security Group.
+3.  Remove the existing security groups on the compromised EC2 instance and replace it with the Quarantine Security Group (the Quarantine Security Group does not allow any ingress or egress traffic to/from the instance's Elastic Network Interfaces (ENIs), so keep this in mind if you plan to SSH to the instance for further analysis).
 
 ### 5. Clean Up
 
-**Don't forget to clean up the resource you created to avoid**
+**Don't forget to clean up the resource you created to avoid additional charges**
 1. Manually delete the SNS email subcription and the Quarantine Security Group.
 2. Delete the **Automatic Event Response Solution cloudformation** stack.
 3. Delete the **Amazon Guardduty Tester environement** stack.
