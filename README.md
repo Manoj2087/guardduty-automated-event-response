@@ -5,6 +5,8 @@ This solution demonstrates how Incident Response can be automated in AWS, using 
 
 This solution can be tested either by [generating sample findings in the GuardDuty console](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_findings.html#guardduty_sample-findings) or by using the [GuardDuty Proof of Concept](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_findings.html#guardduty_findings-scripts) to generate real findings based on exploiting real attack vectors.
 
+If you plan to use the proof of concept in your testing, start with step 1, below and walk through all 5 steps. If you plan to test using GuardDuty sample findings, you only need to complete Step 2 and 3, below.
+
 ### 1. Deploy the Amazon GuardDuty Proof of Concept environment
 
 Perform the **Prerequisites** and **Step1** from [Amazon Guardduty Tester](https://github.com/awslabs/amazon-guardduty-tester)
@@ -19,7 +21,7 @@ the below diagram for the solution.
 
 Deploy the template using CloudFormation in the AWS Console
 
-or
+**or**
 
 Deploy the template using CloudFormation via AWS Cli
 ```
@@ -35,7 +37,11 @@ QuarantineSecurityGroupName=guardduty-quarantine
 
 ### 3. Run the Test
 
-Perform **Step2** and **Step3** from [Amazon Guardduty Tester](https://github.com/awslabs/amazon-guardduty-tester) 
+Perform **Step2** and **Step3** from [Amazon Guardduty Tester](https://github.com/awslabs/amazon-guardduty-tester).
+
+**or**
+
+[Generate sample findings](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_findings.html#guardduty_sample-findings) in the GuardDuty console.
 
 ### 4. Expected result
 
